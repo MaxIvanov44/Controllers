@@ -17,6 +17,8 @@ namespace Controllers
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<ITimeService, SimpleTimeService>();
+
             services.AddControllersWithViews();
         }
 

@@ -1,12 +1,14 @@
 ﻿using Controllers.Models;
 using Controllers.Util;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Controllers.Controllers
 {
@@ -66,16 +68,36 @@ namespace Controllers.Controllers
             return $"id= {id}";
         }
 
-        public IActionResult Index(string s)
+
+        //public void Index()
+        //{
+        //    string table = "";
+        //    foreach (var header in Request.Headers)
+        //    {
+        //        table += $"<tr><td>{header.Key}</td><td>{header.Value}</td></tr>";
+        //    }
+        //    Response.WriteAsync($"<table>{table}</table>");
+
+        //    //Response.StatusCode = 404;
+        //    //Response.WriteAsync("Ресурс не найден");
+        //}
+
+        public string Index()
         {
-            return Ok("Запрос успешно выполнен");
-
-            //if (String.IsNullOrEmpty(s))
-            //    return BadRequest("Не указаны параметры запроса");
-            //return View();
-
-            //return RedirectToRoute("default", new { controller = "Home", action = "Area", height = 2, altitude = 20 });
+            ITimeService timeService = HttpContext.RequestServices.GetService<ITimeService>();
+            return timeService?.Time;
         }
+
+        //public IActionResult Index()
+        //{
+        //    return Ok("Запрос успешно выполнен");
+
+        //    //if (String.IsNullOrEmpty(s))
+        //    //    return BadRequest("Не указаны параметры запроса");
+        //    //return View();
+
+        //    //return RedirectToRoute("default", new { controller = "Home", action = "Area", height = 2, altitude = 20 });
+        //}
 
         public IActionResult Privacy()
         {
@@ -89,9 +111,11 @@ namespace Controllers.Controllers
         }
 
         private readonly IWebHostEnvironment _appEnvironment;
+        private readonly ITimeService _timeService;
 
-        public HomeController(IWebHostEnvironment appEnvironment)
+        public HomeController(IWebHostEnvironment appEnvironment, ITimeService timeServ)
         {
+            _timeService = timeServ;
             _appEnvironment = appEnvironment;
         }
         public IActionResult GetFile()
