@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Controllers.Models;
+using Controllers.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Controllers.Models;
-using Controllers.Util;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Controllers.Controllers
 {
     [Controller]
     public class HomeController : Controller
     {
+        [NonAction]
         [HttpGet]
         public JsonResult GetUser()
         {
@@ -45,8 +44,6 @@ namespace Controllers.Controllers
             return $"Сумма площадей равна {geoms.Sum(g => g.GetArea())}";
         }
 
-        [NonAction]
-        [HttpPost]
         public IActionResult Area(int altitude, int height)
         {
             double area = altitude * height / 2;
@@ -65,6 +62,7 @@ namespace Controllers.Controllers
         {
             return $"id= {id}";
         }
+
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -72,9 +70,15 @@ namespace Controllers.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string s)
         {
-            return View();
+            return Ok("Запрос успешно выполнен");
+
+            //if (String.IsNullOrEmpty(s))
+            //    return BadRequest("Не указаны параметры запроса");
+            //return View();
+
+            //return RedirectToRoute("default", new { controller = "Home", action = "Area", height = 2, altitude = 20 });
         }
 
         public IActionResult Privacy()
@@ -88,7 +92,7 @@ namespace Controllers.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
-    
+
     public class Geometry
     {
         public int Altitude { get; set; } // основание
@@ -98,5 +102,10 @@ namespace Controllers.Controllers
         {
             return Altitude * Height / 2;
         }
+    }
+
+    internal class Error
+    {
+        public string Message { get; set; }
     }
 }
