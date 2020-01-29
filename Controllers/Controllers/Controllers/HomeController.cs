@@ -1,13 +1,16 @@
 ﻿using Controllers.Models;
 using Controllers.Util;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Controllers.Controllers
 {
+    
     [Controller]
     public class HomeController : Controller
     {
@@ -65,10 +68,7 @@ namespace Controllers.Controllers
 
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        
 
         public IActionResult Index(string s)
         {
@@ -90,6 +90,41 @@ namespace Controllers.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private readonly IWebHostEnvironment _appEnvironment;
+
+        public HomeController(IWebHostEnvironment appEnvironment)
+        {
+            _appEnvironment = appEnvironment;
+        }
+        public IActionResult GetFile()
+        {
+            string file_path = Path.Combine(_appEnvironment.ContentRootPath, "Files/book.pdf");
+            string file_type = "application/pdf";
+            string file_name = "book.pdf";
+            return PhysicalFile(file_path, file_type, file_name);
+        }
+        public FileResult GetBytes()
+        {
+            string path = Path.Combine(_appEnvironment.ContentRootPath, "Files/book.pdf");
+            byte[] mas = System.IO.File.ReadAllBytes(path);
+            string file_type = "application/pdf";
+            string file_name = "book2.pdf";
+            return File(mas, file_type, file_name);
+        }
+        public FileResult GetStream()
+        {
+            string path = Path.Combine(_appEnvironment.ContentRootPath, "Files/book.pdf");
+            FileStream fs = new FileStream(path, FileMode.Open);
+            string file_type = "application/pdf";
+            string file_name = "book3.pdf";
+            return File(fs, file_type, file_name);
+        }
+        public VirtualFileResult GetVirtualFile()
+        {
+            var filepath = Path.Combine("~/Files", "hello.txt");
+            return File(filepath, "text/plain", "hello.txt");
         }
     }
 
