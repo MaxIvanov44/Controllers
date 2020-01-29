@@ -12,7 +12,7 @@ namespace Controllers.Controllers
 {
     
     [Controller]
-    public class HomeController : Controller
+    public class HomeController : HelloBaseController
     {
         [NonAction]
         [HttpGet]
@@ -65,10 +65,6 @@ namespace Controllers.Controllers
         {
             return $"id= {id}";
         }
-
-        private readonly ILogger<HomeController> _logger;
-
-        
 
         public IActionResult Index(string s)
         {
